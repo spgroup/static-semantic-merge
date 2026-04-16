@@ -1,32 +1,32 @@
 # Static Semantic Merge
 
-## Uma ferramenta para integração de análise estática ao processo de merge
+## A tool for integrating static analysis into the merge process
 
-A **Static Semantic Merge (SSM)**, utiliza as implementações de análise do projeto **conflict-static-analysis** para identificar interferências em cenários de integração.
-> O **conflict-static-analysis** é um projeto que implementa algoritmos para analisar projetos Java, identificando possíveis conflitos durante o processo de integração.
+The **Static Semantic Merge (SSM)** uses the analysis implementations from the **conflict-static-analysis** project to identify interferences in integration scenarios.
+> The **conflict-static-analysis** is a project that implements algorithms to analyze Java projects, identifying potential conflicts during the integration process.
 
-### Objetivo
+### Goal
 
-O objetivo principal do **SSM** é ser integrado ao processo de desenvolvimento de software para detectar conflitos semânticos em cenários de merge. Isso é alcançado através do uso do **conflict-static-analysis** e do **Mining Framework**.
+The main goal of **SSM** is to be integrated into the software development process to detect semantic conflicts in merge scenarios. This is achieved through the use of **conflict-static-analysis** and the **Mining Framework**.
 
-### Integração ao Processo de Merge
+### Integration into the Merge Process
 
-O **SSM** pode ser acoplado ao processo de merge utilizando o hook de post-merge. A ideia é que o **SSM** seja executado logo após um merge sem conflito textual ser concluído.
+**SSM** can be coupled to the merge process using the post-merge hook. The idea is that **SSM** runs right after a textually conflict-free merge is completed.
 
-O **SSM** consiste em quatro ações principais:
+**SSM** consists of four main actions:
 
-1. Gerar a build do projeto que está sendo mergeado.
-2. Coletar as linhas que foram modificadas dentro do mesmo método.
-3. Executar as análises.
-4. Checa se as análises apontaram conflito e, se sim, reverter o commit.
+1. Generate the build of the project being merged.
+2. Collect the lines that were modified within the same method.
+3. Execute the analyses.
+4. Check if the analyses indicated a conflict and, if so, revert the commit.
 
 ### Hooks
 
-Hooks são scripts personalizados que são disparados quando certas ações ocorrem.
+Hooks are custom scripts that are triggered when certain actions occur.
 
-O script de post-merge fica localizado em `.git/hooks` dentro do projeto e é executado pelo git logo após um merge sem conflitos textuais. O script coleta as informações necessárias e passa para o JAR do **SSM** em forma de parâmetros.
+The post-merge script is located in `.git/hooks` within the project and is executed by git right after a merge without textual conflicts. The script collects the necessary information and passes it to the **SSM** JAR as parameters.
 
-Exemplo de script de post-merge:
+Example post-merge script:
 
 ```bash
 #!/bin/sh
@@ -38,32 +38,35 @@ gradlePath="PATH_TO_GRADLE_BIN"
 mavenPath="PATH_TO_MAVEN_BIN"
 java -jar ${mergerPath}/static-semantic-merge-1.0-SNAPSHOT.jar $head $parents $base $mergerPath $gradlePath $mavenPath
 ```
-### Geração de Build com Gradle
 
-Para gerar a build do projeto com Gradle, utilize o seguinte comando na raiz do projeto:
+### Building with Gradle
+
+To build the project with Gradle, use the following command at the project root:
 
 ```bash
 ./gradlew build
 ```
-### Estrutura do Projeto
 
-Na raiz do projeto, você encontrará o script de exemplo post-merge, além das seguintes pastas:
+### Project Structure
 
-StudyRun: Contém scripts para a execução de cenários específicos.
-dependencies: Inclui os scripts e os JARs das dependências (Mining Framework, Conflict Static Analysis, DiffJ e GroovyCSV).
+At the project root, you will find the example post-merge script, as well as the following folders:
 
-### Requisitos do Projeto
-É necessário que um cli do DiffJ esteja na pasta de dependências e que o diff (ferramenta de diff textual) esteja instalado.
+StudyRun: Contains scripts for executing specific scenarios.
+dependencies: Includes the scripts and JARs of dependencies (Mining Framework, Conflict Static Analysis, DiffJ and GroovyCSV).
 
-> Se estiver utilizando o Windows, será necessário instalar o [DiffUtils](http://gnuwin32.sourceforge.net/packages/diffutils.htm) manualmente. Após a instalação, adicione o diretório de instalação ao PATH nas suas variáveis de ambiente.
+### Project Requirements
 
-Também é necessário instalar o Python versão 3.7.x ou mais recente. Isso é necessário para executar scripts que obtém arquivos de compilação e que converte os dados coletados para um formato utilizado pelas análises estáticas do SOOT invocadas por esta instância.
+It is necessary to have a DiffJ CLI in the dependencies folder and that the diff (textual diff tool) is installed.
 
-> Se você estiver utilizando o Windows e encontrar um erro durante a execução indicando que o Python3 não foi encontrado pelo sistema, localize a pasta de instalação do Python e crie uma cópia do arquivo "python" com o nome "python3". Isso resolverá o problema de localização do Python3 no sistema.
+> If you are using Windows, you will need to install [DiffUtils](http://gnuwin32.sourceforge.net/packages/diffutils.htm) manually. After installation, add the installation directory to PATH in your environment variables.
 
-### Executando do Projeto
+You also need to install Python version 3.7.x or later. This is required to execute scripts that obtain compilation files and convert the collected data into a format used by the static analyses of SOOT invoked by this instance.
 
-A CLI possui a seguinte página de ajuda:
+> If you are using Windows and encounter an error during execution indicating that Python3 was not found by the system, locate the Python installation folder and create a copy of the "python" file named "python3". This will resolve the Python3 location issue on the system.
+
+### Running the Project
+
+The CLI has the following help page:
 ```
 usage: java Main
  -hc <head>                 the head commit
@@ -79,4 +82,4 @@ usage: java Main
  -ep <entrypoints>          entrypoints to be analyzed
 ```
 
-O resultado será escrito em `data/soot-results.csv`
+The result will be written to `data/soot-results.csv`
